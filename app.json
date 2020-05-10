@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "streamboard-mobile",
+    "slug": "streamboard-mobile",
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "androidStatusBar": {
+      "hidden": true
+    },
+    "androidNavigationBar": {
+      "visible": "sticky-immersive"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "me.novustheory.streamboard"
+    }
+  }
+}
