@@ -1,12 +1,24 @@
 import React, { Component } from "react"
-import { StyleSheet, Text, View, Alert } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import * as ScreenOrientation from 'expo-screen-orientation'
 
 export default class SettingsScreen extends Component {
+  constructor (props) {
+    super(props)
+
+    this.onButtonPress = this.onButtonPress.bind(this)
+  }
+
+  onButtonPress () {
+    this.props.navigation.replace('Setup')
+  }
+  
   render () {
     return (
       <View style={styles.container}>
-        <Text>Open up App.js to start working on your settings!</Text>
+        <TouchableOpacity style={styles.button} onPress={this.onButtonPress}>
+          <Text>Open Setup</Text>
+        </TouchableOpacity>
       </View>
     )
   }
@@ -27,7 +39,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
+  button: {
+    padding: 16,
+    backgroundColor: '#eee'
+  }
 });

@@ -4399,6 +4399,13 @@ react-native-screens@~2.2.0:
   dependencies:
     debounce "^1.2.0"
 
+react-native-square-grid@^1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/react-native-square-grid/-/react-native-square-grid-1.0.5.tgz#284e1eff16716dcf0eb9399495cdb5324b5c2d0e"
+  integrity sha512-vlPZFUWfSfgkWiXSfXlcNJZo0eBgSDb9HSGbYHI26xhrhZshr+PdlZEmWhllA7nF+5RgpY/FWwrZE6KatLo2IA==
+  dependencies:
+    prop-types "^15.6.0"
+
 react-native-view-shot@3.1.2:
   version "3.1.2"
   resolved "https://registry.yarnpkg.com/react-native-view-shot/-/react-native-view-shot-3.1.2.tgz#8c8e84c67a4bc8b603e697dbbd59dbc9b4f84825"

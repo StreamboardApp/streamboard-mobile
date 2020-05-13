@@ -28,7 +28,10 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "me.novustheory.streamboard",
+      "buildNumber": "0.0.1a1"
+
     },
     "android": {
       "package": "me.novustheory.streamboard",

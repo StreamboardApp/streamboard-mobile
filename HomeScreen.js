@@ -5,15 +5,20 @@ import { FlingGestureHandler, Directions, State } from 'react-native-gesture-han
 import { connect } from 'react-redux'
 import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake'
 import WS from 'react-native-websocket'
+import SquareGrid from 'react-native-square-grid'
 
 class HomeScreen extends Component {
   constructor (props) {
     super(props)
     this.state = {
-      board: null
+      board: null,
+      rows: 0,
+      columns: 0
     }
 
     this.onButtonPress = this.onButtonPress.bind(this)
+    this.renderButton = this.renderButton.bind(this)
+    this.generateBoardFromStructure = this.generateBoardFromStructure.bind(this)
   }
 
   onButtonPress (row, column) {
@@ -26,6 +31,43 @@ class HomeScreen extends Component {
         }
       }))
     }
+  }
+
+  renderButton (item, index) {
+    return <TouchableOpacity onPress={() => this.onButtonPress(item.rowIndex, item.columnIndex)}>
+      <View style={styles.button}>
+        <View style={styles.content}>
+          {!item.column.state && item.column.icons.inactive.trim() !== '' && (
+            <Image style={styles.icon} source={{ uri: item.column.icons.inactive }}></Image>
+          )}
+          {item.column.state && item.column.icons.active.trim() !== '' && (
+            <Image style={styles.icon} source={{ uri: item.column.icons.active }}></Image>
+          )}
+          <Text>{item.column.label}</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  }
+
+  generateBoardFromStructure (structure) {
+    var rows = structure.length
+    var columns = structure[0].length
+
+    this.setState({ rows })
+    this.setState({ columns })
+    
+    var board = []
+    structure.forEach((row, rowIndex) => {
+      row.forEach((column, columnIndex) => {
+        board.push({
+          column,
+          rowIndex,
+          columnIndex
+        })
+      });
+    });
+
+    this.setState({ board })
   }
 
   render () {
@@ -59,11 +101,11 @@ class HomeScreen extends Component {
                     }
                   }, json.data.heartbeat)
 
-                  this.setState({ board: json.data.board })
+                  this.generateBoardFromStructure(json.data.board.structure)
                   break
                 }
                 case 2: {
-                  this.setState({ board: json.data.board })
+                  this.generateBoardFromStructure(json.data.board.structure)
                 }
               }
             }}
@@ -83,7 +125,8 @@ class HomeScreen extends Component {
           ></WS>
           
           {this.state.board !== null ? (
-            <View style={styles.boardContainer}>
+            <SquareGrid columns={this.state.columns} rows={this.state.rows} items={this.state.board} renderItem={this.renderButton}></SquareGrid>
+            /*<View style={styles.boardContainer}>
               {Object.entries(this.state.board.structure).map(([rowIndex, row]) => (
                 <View style={styles.row} key={rowIndex}>
                   {Object.entries(row).map(([columnIndex, column]) => (
@@ -103,7 +146,7 @@ class HomeScreen extends Component {
                   ))}
                 </View>
               ))}
-            </View>
+            </View>*/
           ) : (
             <Text>No board available</Text>
           )}
@@ -138,17 +181,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  boardContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'column'
-  },
-  row: {
-    display: 'flex',
-    flexDirection: 'row'
-  },
   button: {
+    width: 128,
+    height: 128,
+    aspectRatio: 1,
+    margin: 'auto'
+  },
+  content: {
+    width: 128,
+    height: 128,
+    borderWidth: 1,
+    borderStyle: 'solid',
+    borderColor: '#FAFAFA',
+    borderRadius: 16
+  },
+  icon: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 16
+  }
+  /*button: {
     width: 128,
     height: 128,
     margin: 12,
@@ -162,7 +214,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderRadius: 16
-  }
+  }*/
 });
 
 const mapStateToProps = state => {
