@@ -5,7 +5,8 @@ import { FlingGestureHandler, Directions, State } from 'react-native-gesture-han
 import { connect } from 'react-redux'
 import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake'
 import WS from 'react-native-websocket'
-import SquareGrid from 'react-native-square-grid'
+import { Col, Row, Grid } from 'react-native-easy-grid'
+import { vw, vh } from 'react-native-expo-viewport-units'
 
 class HomeScreen extends Component {
   constructor (props) {
@@ -101,11 +102,14 @@ class HomeScreen extends Component {
                     }
                   }, json.data.heartbeat)
 
-                  this.generateBoardFromStructure(json.data.board.structure)
+                  //this.generateBoardFromStructure(json.data.board.structure)
+                  this.setState({ board: json.data.board })
                   break
                 }
                 case 2: {
-                  this.generateBoardFromStructure(json.data.board.structure)
+                  //this.generateBoardFromStructure(json.data.board.structure)
+                  this.setState({ board: json.data.board })
+                  break
                 }
               }
             }}
@@ -125,7 +129,28 @@ class HomeScreen extends Component {
           ></WS>
           
           {this.state.board !== null ? (
-            <SquareGrid columns={this.state.columns} rows={this.state.rows} items={this.state.board} renderItem={this.renderButton}></SquareGrid>
+            /*<SquareGrid columns={this.state.columns} rows={this.state.rows} items={this.state.board} renderItem={this.renderButton}></SquareGrid>*/
+            <Grid style={styles.grid}>
+              {Object.entries(this.state.board.structure).map(([rowIndex, row]) => (
+                <Row style={styles.row} key={rowIndex}>
+                  {Object.entries(row).map(([columnIndex, column]) => (
+                    <Col style={styles.column} key={columnIndex}>
+                      <TouchableOpacity style={styles.button} onPress={() => this.onButtonPress(rowIndex, columnIndex)}>
+                        <View style={styles.buttonContainer}>
+                          {!column.state && column.icons.inactive.trim() !== '' && (
+                            <Image style={styles.icon} source={{ uri: column.icons.inactive }}></Image>
+                          )}
+                          {column.state && column.icons.active.trim() !== '' && (
+                            <Image style={styles.icon} source={{ uri: column.icons.active }}></Image>
+                          )}
+                          <Text>{column.label}</Text>
+                        </View>
+                      </TouchableOpacity>
+                    </Col>
+                  ))}
+                </Row>
+              ))}
+            </Grid>
             /*<View style={styles.boardContainer}>
               {Object.entries(this.state.board.structure).map(([rowIndex, row]) => (
                 <View style={styles.row} key={rowIndex}>
@@ -179,42 +204,46 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#212121',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
+  },
+  grid: {
+    width: vw(100),
+    maxWidth: vh(100),
+    maxHeight: vh(100)
+  },
+  row: {
+    display: 'flex'
+  },
+  column: {
+    margin: vw(0.75),
+    position: 'relative',
+    aspectRatio: 1
   },
   button: {
-    width: 128,
-    height: 128,
-    aspectRatio: 1,
-    margin: 'auto'
-  },
-  content: {
-    width: 128,
-    height: 128,
+    margin: 'auto',
     borderWidth: 1,
     borderStyle: 'solid',
     borderColor: '#FAFAFA',
-    borderRadius: 16
+    borderRadius: 16,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    top: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%'
+  },
+  buttonContainer: {
+    width: '100%',
+    height: '100%'
   },
   icon: {
     width: '100%',
     height: '100%',
     borderRadius: 16
   }
-  /*button: {
-    width: 128,
-    height: 128,
-    margin: 12,
-    //margin: '0.75rem',
-    borderWidth: 1,
-    borderStyle: 'solid',
-    borderColor: '#FAFAFA',
-    borderRadius: 16
-  },
-  icon: {
-    width: '100%',
-    height: '100%',
-    borderRadius: 16
-  }*/
 });
 
 const mapStateToProps = state => {
